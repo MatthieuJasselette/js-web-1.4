@@ -21,9 +21,9 @@ let currentYear = today.getFullYear();
 //code to determine if a year is bissextile ; used in dayGen
 let isBissextil = (year) => {
   if((year%4 == 0 && year% 100 !== 0) || year%400 == 0) {
-      return "Bissextil";
+      return true;
   } else {
-      return "!Bissextil";
+      return false;
   }
 }
 
@@ -38,58 +38,48 @@ let yearGen = () => {
     return tempArr;
 }
 
-//array containing 100 years from the current one ; used to fill the year droplist content
+//arrays containing years, months, days ; used to fill each droplist content
+let arrDay = [];
+let arrMonth = [];
 let arrYear = yearGen();
 
 //code to generate an array of 12 month ; used in arrMonth
 let monthGen = () => {
-    let tempArr = [];
+    arrMonth = [];
     for (let i = 0; i < 12 ; i ++){
-        tempArr.push(i+1);
+        arrMonth.push(i+1);
     }
-    return tempArr;
+    monthList.style.display = 'block';
+    return arrMonth;
 }
-
-//Array containing 12 months ; used to fill the month droplist content
-let arrMonth = monthGen();
-
-//code to generate an array of 12 month ; used in arrMonth
-let dayGen = () => {
-    let tempArr = [];
-    for (let i = 0; i < 12 ; i ++){
-        tempArr.push(i+1);
-    }
-    return tempArr;
-}
-
-//Array containing 12 months ; used to fill the month droplist content
-let arrDay = dayGen();
 
 //code to generate an array conaining 28 to 31 days ; used in arrDay
 //To check
-// let dayGen = () => {
-//     let tempArr = [];
-//     if (document.getElementById("myMonth").value === 4 || document.getElementById("myMonth").value === 6 || document.getElementById("myMonth").value === 9 || document.getElementById("myMonth").value ===11){ //regular month of 30 days
-//         for (let i = 0; i < 30 ; i ++){
-//             tempArr.push(i+1);
-//         }
-//     } else if ( document.getElementById("myMonth").value === 2) { //February
-//         if (isBissextil(document.getElementById("myYear").value) == true) {//february - leap year
-//             for (let i = 0; i < 28 ; i ++){
-//                 tempArr.push(i+1);
-//             }
-//         } else { //february + leap year
-//             for (let i = 0; i < 29 ; i ++){
-//                 tempArr.push(i+1);
-//             }
-//         }
-//     } else { //regular month of 31 days
-//         for (let i = 0; i < 31 ; i ++){
-//             tempArr.push(i+1);
-// } Snipped the "if" portion to test with a simple 31 days array
-//     }
-//     return tempArr;
-// }
+let dayGen = (month, year) => {
+    arrDay = [];
+    dayList.style.display = 'block';
+    let shortMonth = [4, 6, 9, 11]
+    if (month == 4 || month == 6 || month == 9 || month == 11){ //regular month of 30 days
+        for (let i = 0; i < 30 ; i ++){
+            arrDay.push(i+1);
+        }
+    } else if (month == 2) { //February
+        if (isBissextil(year) == true) {//february - leap year
+            for (let i = 0; i < 29 ; i ++){
+                arrDay.push(i+1);
+            }
+        } else { //february + leap year
+            for (let i = 0; i < 28 ; i ++){
+                arrDay.push(i+1);
+            }
+        }
+    } else { //regular month of 31 days
+        for (let i = 0; i < 31 ; i ++){
+            arrDay.push(i+1);
+        }
+    }
+    return arrDay;
+}
 
 let yearList = document.getElementById("myYear")
 //Create and append the options for yearList
@@ -99,24 +89,35 @@ for (let i = 0; i < arrYear.length; i++) {
     option.text = arrYear[i];
     yearList.appendChild(option);
 }
+yearList.addEventListener('click', () => {monthGen(); appendMonth()});
 
 let monthList = document.getElementById("myMonth")
-//Create and append the options for monthList
-for (let i = 0; i < arrMonth.length; i++) {
+monthList.style.display = "none";
+//Create and append the options for monthList ; must be in a fct to be called after the page loads
+let appendMonth = () => {
+    monthList.innerHTML = '';
+    for (let i = 0; i < arrMonth.length; i++) {
     let option = document.createElement("option");
     option.value = arrMonth[i];
     option.text = arrMonth[i];
     monthList.appendChild(option);
+  }
 }
+monthList.addEventListener('click', () => {dayGen(document.getElementById("myMonth").value, document.getElementById('myYear').value); appendDay()});
 
-let dayList = document.getElementById("myday")
+let dayList = document.getElementById("myDay")
+dayList.style.display = "none";
 // Create and append the options for dayList
-for (let i = 0; i < arrDay.length; i++) {
-    let option = document.createElement("option");
-    option.value = arrDay[i];
-    option.text = arrDay[i];
-    dayList.appendChild(option);
+let appendDay = () => {
+    dayList.innerHTML = '';
+    for (let i = 0; i < arrDay.length; i++) {
+        let option = document.createElement("option");
+        option.value = arrDay[i];
+        option.text = arrDay[i];
+        dayList.appendChild(option);
+    }
 }
+dayList.addEventListener('click', () => {ageCalc()});
 
 //code to calculate the age
 let ageCalc = () => {
@@ -125,10 +126,6 @@ let ageCalc = () => {
     let bDay = parseInt(document.getElementById("myDay").value);
     let bMonth = parseInt(document.getElementById("myMonth").value);
     let bYear = parseInt(document.getElementById("myYear").value);
-    //code to acquire the input values through inputs ; control method
-      // let bDay = parseInt(document.getElementById("day").value);
-      // let bMonth = parseInt(document.getElementById("month").value);
-      // let bYear = parseInt(document.getElementById("year").value);
     //code to determine wether the birthday already occured this year
     if (currentMonth !== bMonth) {
         if (currentMonth > bMonth) {
@@ -148,6 +145,3 @@ let ageCalc = () => {
         }
     }
 }
-
-//temporary code to
-document.getElementById('ageButton').addEventListener('click', () => ageCalc());//control version ; on click
