@@ -3,7 +3,7 @@ Display three select boxes allowing to enter a birthdate. When the user selects 
 
 Bonus: Make your components smart by making it impossible to enter a date that doesn't exist. (Like 1990-04-31 or 1991-02-29.)
 
-Lien vers la (github page)[https://matthieujasselette.github.io/js-web-1.4/]
+Lien vers la [github page](https://matthieujasselette.github.io/js-web-1.4/)
 
 # Becode Template for JavaScript Exercises
 
